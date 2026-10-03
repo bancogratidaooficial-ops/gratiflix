@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY KNAY + VidSync BRILHO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{background:#000;color:#fff;font-family:Arial;overflow:hidden}
+.topo{position:fixed;top:0;left:0;right:0;background:#ff0055;padding:10px;text-align:center;z-index:10;font-weight:bold}
+.chave{position:fixed;top:42px;left:0;right:0;background:#1F4E79;padding:6px 8px;z-index:10;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;padding-top:78px;padding-bottom:140px;filter:brightness(150%) contrast(120%);transition:filter .2s}
+.item{height:calc(100vh - 218px);scroll-snap-align:start;position:relative;background:#000;display:flex;justify-content:center;align-items:center}
+.item video{width:100%;height:100%;object-fit:contain}
+.brilhoBar{position:fixed;top:72px;left:0;right:0;background:#222;padding:6px 10px;z-index:9;display:flex;align-items:center;gap:8px}
+.brilhoBar input{flex:1}
+.audio{position:absolute;left:10px;top:50%;background:#ff0055;padding:8px 12px;border-radius:20px;border:0;color:#fff;font-weight:bold}
+.overlay{position:absolute;left:10px;bottom:40px;background:rgba(0,0,0,.6);padding:5px;border-radius:6px}
+.lateral{position:absolute;right:10px;bottom:20px;display:flex;flex-direction:column;gap:8px}
+.lateral button{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.25);color:#fff}
+.boxAdd{position:fixed;top:110px;left:10px;right:10px;background:#fff;color:#000;border-radius:12px;padding:12px;z-index:99;display:none;max-height:75vh;overflow:auto}
+.bbaixo{position:fixed;bottom:0;left:0;right:0;background:#111;padding:6px;display:flex;flex-direction:column;gap:6px;z-index:10}
+.linha{display:flex;gap:6px}.linha button{flex:1;padding:12px 2px;border-radius:10px;border:0;font-weight:bold;font-size:11px}
+</style>
+</head>
+<body>
+<div class="topo">MY KNAY 🔥 + VidSync Brilho (<span id="cont">0</span>)</div>
+<div class="chave"><span>🔑 Plug TV OK</span><button onclick="abrirVidSync()" style="background:#d4ff00;color:#000;border:0;padding:6px 12px;border-radius:8px;font-weight:bold">⚡ ABRIR VidSync-FocusPlan</button></div>
+
+<div class="brilhoBar">
+<span>☀️</span><input type="range" id="brilho" min="100" max="300" value="150" oninput="mudaBrilho(this.value)"><span id="valB">150%</span>
+<button onclick="mudaBrilho(220)" style="background:#ff0;border:0;padding:6px 8px;border-radius:6px;font-weight:bold">MAX BRILHO</button>
+</div>
+
+<div class="feed" id="feed"></div>
+
+<div class="boxAdd" id="boxAdd">
+<h3>⚡ Plug TV</h3>
+<button onclick="abrirVidSync()" style="background:#d4ff00;color:#000;width:100%;padding:14px;border:0;border-radius:10px;font-weight:bold;margin-top:6px">▶️ ABRIR VidSync-FocusPlan DENTRO DO MY KNAY</button>
+<p style="font-size:11px;margin-top:6px">Se não abrir, clique em ABRIR que já vai estar com brilho aumentado.</p>
+<input type="file" id="files" accept="video/*" multiple onchange="addFiles(this)">
+<button onclick="document.getElementById('files').click()" style="background:#7b5cff;color:#fff;width:100%;padding:12px;border:0;border-radius:8px;margin-top:8px">📁 ADD VÍDEO COM ÁUDIO</button>
+<button onclick="fecharAdd()" style="background:#000;color:#fff;width:100%;padding:10px;border-radius:8px;margin-top:10px">FECHAR</button>
+</div>
+
+<div class="bbaixo">
+<div class="linha">
+<button onclick="ativarSom()" style="background:#ff0055;color:#fff">🔊 SOM</button>
+<button onclick="abrirVidSync()" style="background:#d4ff00;color:#000">⚡ VidSync</button>
+<button onclick="mudaBrilho(220)" style="background:#ffe600;color:#000">☀️ + BRILHO</button>
+<button onclick="resetar()" style="background:#fff;color:#000">🧹 RESET</button>
+</div>
+<div class="linha">
+<button onclick="document.getElementById('files').click()" style="background:#00a8ff;color:#fff">📁 VÁRIOS</button>
+<button onclick="abrirAdd()" style="background:#ff9f00;color:#000">🔍 BUSCA</button>
+<button onclick="aleatorio()" style="background:#ff3b3b;color:#fff">▶️ KNAY</button>
+<button onclick="abrirAdd()" style="background:#00e5ff;color:#000">⚙️ AJUSTE</button>
+</div>
+</div>
+
+<script>
+let videos=[];try{videos=JSON.parse(localStorage.getItem('knaY_FINAL')||'[]')}catch{videos=[]}
+if(videos.length==0){videos=[{nome:'Toque pra som + brilho',url:'https://www.w3schools.com/html/mov_bbb.mp4'}]}
+function salvar(){localStorage.setItem('knaY_FINAL',JSON.stringify(videos.filter(v=>!v.url.startsWith('blob:'))))}
+function render(){
+  let feed=document.getElementById('feed');feed.innerHTML='';
+  videos.forEach((v,i)=>{
+    let d=document.createElement('div');d.className='item';
+    d.innerHTML=`<video src="${v.url}" loop playsinline onclick="ligarSom(this)" id="vd${i}"></video>
+    <button class="audio" onclick="ligarSom(document.getElementById('vd${i}'))">🔊 + ☀️ TOQUE</button>
+    <div class="overlay">${v.nome}</div>
+    <div class="lateral"><button onclick="rem(${i})">🗑️</button></div>`;
+    feed.appendChild(d);
+  });
+  const obs=new IntersectionObserver(ents=>{ents.forEach(en=>{let vd=en.target.querySelector('video'); if(en.isIntersecting){vd.muted=true; vd.play().catch(()=>{});} else vd.pause();});},{threshold:0.6});
+  document.querySelectorAll('.item').forEach(el=>obs.observe(el));
+  document.getElementById('cont').innerText=videos.length;
+}
+function mudaBrilho(v){document.getElementById('feed').style.filter=`brightness(${v}%) contrast(120%) saturate(130%)`; document.getElementById('valB').innerText=v+'%'; localStorage.setItem('brilhoPlug',v);}
+function ligarSom(vd){vd.muted=false; vd.volume=1; vd.play(); vd.parentElement.querySelector('.audio').style.display='none';}
+function ativarSom(){document.querySelectorAll('video').forEach(v=>{v.muted=false; v.volume=1; v.play();});}
+function addFiles(inp){for(let f of inp.files){videos.unshift({nome:f.name,url:URL.createObjectURL(f)});}render();salvar();fecharAdd();}
+function abrirVidSync(){
+  // Tenta abrir o app instalado
+  let pkg = "com.vidsync.focusplan"; // pacote do seu app do print
+  // 1 - Tenta intent Android
+  window.location.href = `intent://open#Intent;package=${pkg};end`;
+  // 2 - Se for Plug TV WebView, tenta esquema
+  setTimeout(()=>{ window.open('vidsync-focusplan://','_blank'); },500);
+  alert('⚡ Abrindo VidSync-FocusPlan com BRILHO '+document.getElementById('brilho').value+'% ativado no MY KNAY. Se não abriu, clique em ABRIR no sistema.');
+}
+function rem(i){if(confirm('Apagar?')){videos.splice(i,1);render();salvar();}}
+function resetar(){if(confirm('Apagar?')){videos=[];localStorage.removeItem('knaY_FINAL');render();}}
+function abrirAdd(){document.getElementById('boxAdd').style.display='block'}function fecharAdd(){document.getElementById('boxAdd').style.display='none'}function aleatorio(){let its=document.querySelectorAll('.item'); if(its.length) its[Math.floor(Math.random()*its.length)].scrollIntoView({behavior:'smooth'});}
+let bSalvo=localStorage.getItem('brilhoPlug'); if(bSalvo){document.getElementById('brilho').value=bSalvo; mudaBrilho(bSalvo);}
+window.onload=render;
+</script>
+</body>
+</html>
