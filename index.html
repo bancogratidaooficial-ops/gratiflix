@@ -1,96 +1,183 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MY KNAY + VidSync BRILHO</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRATIFLIX</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{background:#000;color:#fff;font-family:Arial;overflow:hidden}
-.topo{position:fixed;top:0;left:0;right:0;background:#ff0055;padding:10px;text-align:center;z-index:10;font-weight:bold}
-.chave{position:fixed;top:42px;left:0;right:0;background:#1F4E79;padding:6px 8px;z-index:10;display:flex;justify-content:space-between;align-items:center;font-size:12px}
-.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;padding-top:78px;padding-bottom:140px;filter:brightness(150%) contrast(120%);transition:filter .2s}
-.item{height:calc(100vh - 218px);scroll-snap-align:start;position:relative;background:#000;display:flex;justify-content:center;align-items:center}
-.item video{width:100%;height:100%;object-fit:contain}
-.brilhoBar{position:fixed;top:72px;left:0;right:0;background:#222;padding:6px 10px;z-index:9;display:flex;align-items:center;gap:8px}
-.brilhoBar input{flex:1}
-.audio{position:absolute;left:10px;top:50%;background:#ff0055;padding:8px 12px;border-radius:20px;border:0;color:#fff;font-weight:bold}
-.overlay{position:absolute;left:10px;bottom:40px;background:rgba(0,0,0,.6);padding:5px;border-radius:6px}
-.lateral{position:absolute;right:10px;bottom:20px;display:flex;flex-direction:column;gap:8px}
-.lateral button{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.25);color:#fff}
-.boxAdd{position:fixed;top:110px;left:10px;right:10px;background:#fff;color:#000;border-radius:12px;padding:12px;z-index:99;display:none;max-height:75vh;overflow:auto}
-.bbaixo{position:fixed;bottom:0;left:0;right:0;background:#111;padding:6px;display:flex;flex-direction:column;gap:6px;z-index:10}
-.linha{display:flex;gap:6px}.linha button{flex:1;padding:12px 2px;border-radius:10px;border:0;font-weight:bold;font-size:11px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#141414;color:#fff;font-family:Arial,sans-serif}
+header{padding:12px 4%;background:#000;position:fixed;width:100%;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.logo{color:#e50914;font-size:32px;font-weight:900;letter-spacing:1px}
+.logo b{color:#fff;font-weight:300}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.actions button{border:none;padding:8px 11px;border-radius:4px;font-weight:800;cursor:pointer;font-size:10px}
+.btn-red{background:#e50914;color:#fff}.btn-green{background:#00c851;color:#fff}.btn-blue{background:#0071eb;color:#fff}.btn-yellow{background:#ffb400;color:#000}.btn-gray{background:#333;color:#fff}
+.search{margin-top:70px;padding:10px 4%;background:#0a0a0a;display:flex;gap:8px;position:fixed;width:100%;z-index:90}
+.search input{flex:1;padding:12px;border-radius:4px;border:none;background:#222;color:#fff}
+.search button{padding:12px 16px;border-radius:4px;border:none;background:#e50914;color:#fff;font-weight:900}
+/* BANNER NOVO GRATIFLIX NEON */
+.banner{margin-top:122px;height:58vh;background:linear-gradient(to top,#141414 15%,rgba(0,0,0,0.3) 60%),url('banner-gratiflix.webp');background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:4%;border-bottom:3px solid #e50914}
+.banner-box{max-width:600px;background:rgba(0,0,0,0.5);padding:15px;border-radius:8px;backdrop-filter:blur(5px)}
+.banner-box h1{font-size:52px;font-weight:900;color:#fff;text-shadow:0 0 20px #e50914, 3px 3px 10px #000;line-height:1}
+.banner-box h1 span{color:#e50914}
+.banner-box p{margin:12px 0;font-size:15px;color:#eee}
+.tag{background:#e50914;padding:4px 8px;border-radius:3px;font-size:11px;font-weight:800;margin-right:5px}
+.row-title{font-size:18px;margin:28px 0 10px 4%;font-weight:800;color:#fff;border-left:4px solid #e50914;padding-left:8px}
+.row{display:flex;gap:10px;overflow-x:auto;padding:0 4% 10px;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.card{min-width:155px;max-width:155px;height:240px;background:#222;border-radius:6px;overflow:hidden;position:relative;flex-shrink:0;transition:0.25s}
+.card:hover{transform:scale(1.07);box-shadow:0 0 20px rgba(229,9,20,0.5)}
+.card img{width:100%;height:80%;object-fit:cover;cursor:pointer}
+.card.t{padding:5px 6px;font-size:11px;background:#181818;height:20%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.edit{position:absolute;top:5px;left:5px;background:#ffb400;color:#000;border:none;padding:4px 6px;border-radius:4px;font-size:11px;z-index:2;font-weight:800}
+.del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.85);color:#fff;border:none;padding:4px 6px;border-radius:4px;z-index:2}
+#player{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:none}
+#player iframe,#player video{width:100%;height:100%;border:none}
+#player.voltar{position:absolute;top:15px;left:15px;background:#e50914;color:#fff;border:none;padding:9px 14px;border-radius:4px;z-index:10000;font-weight:800}
+#modalAdd{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;display:none;align-items:center;justify-content:center;padding:15px}
+.modal-box{background:#181818;border-radius:10px;padding:18px;width:100%;max-width:430px;border:1px solid #333}
+.modal-box h2{color:#e50914;margin-bottom:12px}
+.modal-box label{font-size:11px;color:#ffb400;font-weight:800;margin:8px 0 4px;display:block}
+.modal-box input[type=text],.modal-box select{width:100%;padding:11px;border-radius:6px;border:none;background:#222;color:#fff;margin-bottom:8px}
+.file-box{background:#222;border-radius:6px;padding:8px;margin-bottom:8px}
+#preview,#previewCapa{width:100%;max-height:150px;display:none;margin-top:6px;border-radius:6px}
+.btns{display:flex;gap:10px;margin-top:14px}
+.btns button{flex:1;padding:13px;border:none;border-radius:6px;font-weight:800}
 </style>
 </head>
 <body>
-<div class="topo">MY KNAY 🔥 + VidSync Brilho (<span id="cont">0</span>)</div>
-<div class="chave"><span>🔑 Plug TV OK</span><button onclick="abrirVidSync()" style="background:#d4ff00;color:#000;border:0;padding:6px 12px;border-radius:8px;font-weight:bold">⚡ ABRIR VidSync-FocusPlan</button></div>
+<header>
+<div class="logo">GRATI<b>FLIX</b></div>
+<div class="actions">
+<button class="btn-red" onclick="abrirModal()">+ VIDEO</button>
+<button class="btn-green" onclick="abrirModalYT()">+ LINK YT</button>
+<button class="btn-blue" onclick="adicionarGenero()">+ PASTA</button>
+<button class="btn-yellow" onclick="exportarFixo()">💾 SALVAR FIXO</button>
+<button class="btn-gray" onclick="location.reload()">↻ ATUALIZAR</button>
+</div>
+</header>
+<div class="search"><input id="busca" placeholder="🔍 Buscar..." oninput="filtrar()"><button onclick="filtrar()">🔍</button></div>
 
-<div class="brilhoBar">
-<span>☀️</span><input type="range" id="brilho" min="100" max="300" value="150" oninput="mudaBrilho(this.value)"><span id="valB">150%</span>
-<button onclick="mudaBrilho(220)" style="background:#ff0;border:0;padding:6px 8px;border-radius:6px;font-weight:bold">MAX BRILHO</button>
+<div class="banner">
+<div class="banner-box">
+<h1><span>GRATI</span>FLIX</h1>
+<p><span class="tag">TOP 10</span><span class="tag">4K</span> Filmes, Doramas e Super Man - Todos codificados, não somem mais!</p>
+<p style="font-size:11px;color:#ccc">✏️ Clique no lápis para mudar o nome</p>
+</div>
 </div>
 
-<div class="feed" id="feed"></div>
+<div id="containerPastas"></div>
 
-<div class="boxAdd" id="boxAdd">
-<h3>⚡ Plug TV</h3>
-<button onclick="abrirVidSync()" style="background:#d4ff00;color:#000;width:100%;padding:14px;border:0;border-radius:10px;font-weight:bold;margin-top:6px">▶️ ABRIR VidSync-FocusPlan DENTRO DO MY KNAY</button>
-<p style="font-size:11px;margin-top:6px">Se não abrir, clique em ABRIR que já vai estar com brilho aumentado.</p>
-<input type="file" id="files" accept="video/*" multiple onchange="addFiles(this)">
-<button onclick="document.getElementById('files').click()" style="background:#7b5cff;color:#fff;width:100%;padding:12px;border:0;border-radius:8px;margin-top:8px">📁 ADD VÍDEO COM ÁUDIO</button>
-<button onclick="fecharAdd()" style="background:#000;color:#fff;width:100%;padding:10px;border-radius:8px;margin-top:10px">FECHAR</button>
-</div>
+<div id="player"><button class="voltar" onclick="fecharPlayer()">↩ VOLTAR</button><iframe id="frame" style="display:none" allowfullscreen allow="autoplay"></iframe><video id="videoLocal" style="display:none" controls></video></div>
 
-<div class="bbaixo">
-<div class="linha">
-<button onclick="ativarSom()" style="background:#ff0055;color:#fff">🔊 SOM</button>
-<button onclick="abrirVidSync()" style="background:#d4ff00;color:#000">⚡ VidSync</button>
-<button onclick="mudaBrilho(220)" style="background:#ffe600;color:#000">☀️ + BRILHO</button>
-<button onclick="resetar()" style="background:#fff;color:#000">🧹 RESET</button>
-</div>
-<div class="linha">
-<button onclick="document.getElementById('files').click()" style="background:#00a8ff;color:#fff">📁 VÁRIOS</button>
-<button onclick="abrirAdd()" style="background:#ff9f00;color:#000">🔍 BUSCA</button>
-<button onclick="aleatorio()" style="background:#ff3b3b;color:#fff">▶️ KNAY</button>
-<button onclick="abrirAdd()" style="background:#00e5ff;color:#000">⚙️ AJUSTE</button>
-</div>
-</div>
+<div id="modalAdd"><div class="modal-box">
+<h2 id="tituloModal">Adicionar</h2>
+<label>Pasta:</label><select id="pastaDestino"></select>
+<label>Nome:</label><input type="text" id="inputNome" placeholder="Ex: Super Man 2">
+<div id="areaYT" style="display:none"><label>🔗 Link YouTube:</label><input type="text" id="inputLinkYT" placeholder="https://youtu.be/..."></div>
+<div id="areaCelular"><label>📷 Capa:</label><div class="file-box"><input type="file" id="inputCapa" accept="image/*"></div><img id="previewCapa"><label>🎬 Vídeo:</label><div class="file-box"><input type="file" id="inputVideo" accept="video/*"></div><video id="preview" controls></video></div>
+<div class="btns"><button style="background:#333;color:#fff" onclick="fecharModal()">Cancelar</button><button style="background:#e50914;color:#fff" onclick="salvarFixo()">SALVAR FIXO</button></div>
+</div></div>
 
 <script>
-let videos=[];try{videos=JSON.parse(localStorage.getItem('knaY_FINAL')||'[]')}catch{videos=[]}
-if(videos.length==0){videos=[{nome:'Toque pra som + brilho',url:'https://www.w3schools.com/html/mov_bbb.mp4'}]}
-function salvar(){localStorage.setItem('knaY_FINAL',JSON.stringify(videos.filter(v=>!v.url.startsWith('blob:'))))}
-function render(){
-  let feed=document.getElementById('feed');feed.innerHTML='';
-  videos.forEach((v,i)=>{
-    let d=document.createElement('div');d.className='item';
-    d.innerHTML=`<video src="${v.url}" loop playsinline onclick="ligarSom(this)" id="vd${i}"></video>
-    <button class="audio" onclick="ligarSom(document.getElementById('vd${i}'))">🔊 + ☀️ TOQUE</button>
-    <div class="overlay">${v.nome}</div>
-    <div class="lateral"><button onclick="rem(${i})">🗑️</button></div>`;
-    feed.appendChild(d);
+try{JSON.parse(localStorage.getItem('grati_lista')||'[]')}catch(e){localStorage.removeItem('grati_lista')}
+try{JSON.parse(localStorage.getItem('grati_generos')||'[]')}catch(e){localStorage.removeItem('grati_generos')}
+let GENEROS_PADRAO=["Super Man","Filmes","Doramas","Ação","Geral"];
+let filmesBase=[
+{t:"Filme 1",i:"https://img.youtube.com/vi/lpeIKPBsuLc/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/lpeIKPBsuLc",pasta:"Filmes",type:"yt"},
+{t:"Filme 2",i:"https://img.youtube.com/vi/lIZdF-Yf-ig/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/lIZdF-Yf-ig",pasta:"Filmes",type:"yt"},
+{t:"Filme 3",i:"https://img.youtube.com/vi/PuVuB9iKZGg/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/PuVuB9iKZGg",pasta:"Filmes",type:"yt"},
+{t:"Filme 4",i:"https://img.youtube.com/vi/jaGKARCrOqI/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/jaGKARCrOqI",pasta:"Filmes",type:"yt"},
+{t:"Filme 5",i:"https://img.youtube.com/vi/Kp6uGrRC_P4/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/Kp6uGrRC_P4",pasta:"Filmes",type:"yt"},
+{t:"Filme 6",i:"https://img.youtube.com/vi/iMGIXI8hgM4/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/iMGIXI8hgM4",pasta:"Filmes",type:"yt"},
+{t:"Filme 7",i:"https://img.youtube.com/vi/27eKL7NsD6k/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/27eKL7NsD6k",pasta:"Filmes",type:"yt"},
+{t:"Filme 8",i:"https://img.youtube.com/vi/AJzLawEAOtA/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/AJzLawEAOtA",pasta:"Filmes",type:"yt"},
+{t:"Filme 9",i:"https://img.youtube.com/vi/gaPE0HTgAP0/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/gaPE0HTgAP0",pasta:"Doramas",type:"yt"},
+{t:"Filme 10",i:"https://img.youtube.com/vi/80UbjxkkgLs/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/80UbjxkkgLs",pasta:"Doramas",type:"yt"},
+{t:"Filme 11",i:"https://img.youtube.com/vi/e0ck628ObK8/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/e0ck628ObK8",pasta:"Doramas",type:"yt"},
+{t:"Filme 12",i:"https://img.youtube.com/vi/d-whmqx4bFU/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/d-whmqx4bFU",pasta:"Doramas",type:"yt"},
+{t:"Filme 13",i:"https://img.youtube.com/vi/kYnCTHWUG_4/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/kYnCTHWUG_4",pasta:"Doramas",type:"yt"},
+{t:"Filme 14",i:"https://img.youtube.com/vi/pidOEppgiTA/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/pidOEppgiTA",pasta:"Doramas",type:"yt"},
+{t:"Filme 15",i:"https://img.youtube.com/vi/e83StaXfk10/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/e83StaXfk10",pasta:"Doramas",type:"yt"},
+{t:"Filme 16",i:"https://img.youtube.com/vi/FbXARpOhCxs/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/FbXARpOhCxs",pasta:"Doramas",type:"yt"},
+{t:"Filme 17",i:"https://img.youtube.com/vi/f1qrdpbGMQo/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/f1qrdpbGMQo",pasta:"Doramas",type:"yt"},
+{t:"Filme 18",i:"https://img.youtube.com/vi/jWqdqeXtKW8/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/jWqdqeXtKW8",pasta:"Doramas",type:"yt"},
+{t:"Filme 19",i:"https://img.youtube.com/vi/t8NUSlDv8Gs/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/t8NUSlDv8Gs",pasta:"Doramas",type:"yt"},
+{t:"Super Man 1",i:"https://img.youtube.com/vi/plaU0sa1MQ8/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/plaU0sa1MQ8",pasta:"Super Man",type:"yt"},
+{t:"Super Man 2",i:"https://img.youtube.com/vi/Rw3Tv8WAd1w/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/Rw3Tv8WAd1w",pasta:"Super Man",type:"yt"},
+{t:"Super Man 3",i:"https://img.youtube.com/vi/g-Nyi9dOy6E/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/g-Nyi9dOy6E",pasta:"Super Man",type:"yt"},
+{t:"Super Man 4",i:"https://img.youtube.com/vi/nul6lTbu3oA/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/nul6lTbu3oA",pasta:"Super Man",type:"yt"},
+{t:"Super Man 5",i:"https://img.youtube.com/vi/6lcoN1wEwfY/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/6lcoN1wEwfY",pasta:"Super Man",type:"yt"},
+{t:"Super Man 6",i:"https://img.youtube.com/vi/t0EDs_Em5SA/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/t0EDs_Em5SA",pasta:"Super Man",type:"yt"},
+{t:"Super Man 7",i:"https://img.youtube.com/vi/Okdz0F_yvOs/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/Okdz0F_yvOs",pasta:"Super Man",type:"yt"},
+{t:"Super Man 8",i:"https://img.youtube.com/vi/6c6JRnISSwk/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/6c6JRnISSwk",pasta:"Super Man",type:"yt"},
+{t:"Super Man 9",i:"https://img.youtube.com/vi/9FiJP1GFI5k/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/9FiJP1GFI5k",pasta:"Super Man",type:"yt"},
+{t:"Super Man 10",i:"https://img.youtube.com/vi/dwNV3NHOigE/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/dwNV3NHOigE",pasta:"Super Man",type:"yt"},
+{t:"Super Man 11",i:"https://img.youtube.com/vi/uyJPOwB6NcE/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/uyJPOwB6NcE",pasta:"Super Man",type:"yt"},
+{t:"Super Man 12",i:"https://img.youtube.com/vi/6xCyxJusNPs/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/6xCyxJusNPs",pasta:"Super Man",type:"yt"},
+{t:"Super Man 13",i:"https://img.youtube.com/vi/iza00gea8oI/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/iza00gea8oI",pasta:"Super Man",type:"yt"},
+{t:"Super Man 14",i:"https://img.youtube.com/vi/ks_-OO4liW0/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/ks_-OO4liW0",pasta:"Super Man",type:"yt"},
+{t:"Super Man 15",i:"https://img.youtube.com/vi/bksyv1D6xLc/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/bksyv1D6xLc",pasta:"Super Man",type:"yt"},
+{t:"Super Man 16",i:"https://img.youtube.com/vi/YU21uP7TDYU/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/YU21uP7TDYU",pasta:"Super Man",type:"yt"},
+{t:"Super Man 17",i:"https://img.youtube.com/vi/CBpL31uUye4/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/CBpL31uUye4",pasta:"Super Man",type:"yt"}
+];
+let videoData=null,capaData=null;
+function toDataURL(file,cb){let r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(file);}
+document.getElementById('inputVideo').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;toDataURL(f,d=>{videoData=d;let p=document.getElementById('preview');p.src=d;p.style.display='block';});});
+document.getElementById('inputCapa').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;toDataURL(f,d=>{capaData=d;let i=document.getElementById('previewCapa');i.src=d;i.style.display='block';});});
+function converteYT(url){url=url.trim();if(url.includes('youtube-nocookie.com/embed'))return url;let id='';if(url.includes('youtu.be/'))id=url.split('youtu.be/')[1].split('?')[0].split('&')[0];else if(url.includes('watch?v='))id=url.split('watch?v=')[1].split('&')[0];else if(url.includes('shorts/'))id=url.split('shorts/')[1].split('?')[0].split('&')[0];else if(url.includes('live/'))id=url.split('live/')[1].split('?')[0].split('&')[0];else if(url.length===11)id=url;else return url;return 'https://www.youtube-nocookie.com/embed/'+id;}
+function getGeneros(){let c=JSON.parse(localStorage.getItem('grati_generos')||'[]');return [...new Set([...GENEROS_PADRAO,...c])];}
+function salvarGeneros(){let gens=getGeneros();document.getElementById('pastaDestino').innerHTML=gens.map(g=>`<option value="${g}">${g}</option>`).join('');render(document.getElementById('busca').value||'');}
+function adicionarGenero(){let n=prompt('Nome da pasta?');if(!n)return;let c=JSON.parse(localStorage.getItem('grati_generos')||'[]');c.push(n.trim());localStorage.setItem('grati_generos',JSON.stringify(c));salvarGeneros();}
+function getTodos(){let s=JSON.parse(localStorage.getItem('grati_lista')||'[]');return [...filmesBase,...s];}
+function render(filtro){
+ let cont=document.getElementById('containerPastas');cont.innerHTML='';
+ let todos=getTodos();
+ if(filtro){let f=filtro.toLowerCase();todos=todos.filter(x=>(x.t+x.pasta).toLowerCase().includes(f));}
+ let gens=getGeneros();
+ gens.forEach(gen=>{
+  let lista=todos.filter(f=>f.pasta===gen);
+  if(lista.length===0)return;
+  let html=`<div class="row-title">${gen} (${lista.length})</div><div class="row">`;
+  lista.forEach(f=>{
+   let safe=f.t.replace(/'/g,"\\'");
+   html+=`<div class="card"><button class="edit" onclick="editar('${gen}','${safe}')">✏️</button><button class="del" onclick="apagar('${gen}','${safe}')">🗑</button><img src="${f.i}" onerror="this.src='https://via.placeholder.com/155x200?text=GRATIFLIX'" onclick="abrir('${f.l}',${f.type==='local'})"><div class="t">${f.t}</div></div>`;
   });
-  const obs=new IntersectionObserver(ents=>{ents.forEach(en=>{let vd=en.target.querySelector('video'); if(en.isIntersecting){vd.muted=true; vd.play().catch(()=>{});} else vd.pause();});},{threshold:0.6});
-  document.querySelectorAll('.item').forEach(el=>obs.observe(el));
-  document.getElementById('cont').innerText=videos.length;
+  html+=`</div>`;cont.innerHTML+=html;
+ });
 }
-function mudaBrilho(v){document.getElementById('feed').style.filter=`brightness(${v}%) contrast(120%) saturate(130%)`; document.getElementById('valB').innerText=v+'%'; localStorage.setItem('brilhoPlug',v);}
-function ligarSom(vd){vd.muted=false; vd.volume=1; vd.play(); vd.parentElement.querySelector('.audio').style.display='none';}
-function ativarSom(){document.querySelectorAll('video').forEach(v=>{v.muted=false; v.volume=1; v.play();});}
-function addFiles(inp){for(let f of inp.files){videos.unshift({nome:f.name,url:URL.createObjectURL(f)});}render();salvar();fecharAdd();}
-function abrirVidSync(){
-  // Tenta abrir o app instalado
-  let pkg = "com.vidsync.focusplan"; // pacote do seu app do print
-  // 1 - Tenta intent Android
-  window.location.href = `intent://open#Intent;package=${pkg};end`;
-  // 2 - Se for Plug TV WebView, tenta esquema
-  setTimeout(()=>{ window.open('vidsync-focusplan://','_blank'); },500);
-  alert('⚡ Abrindo VidSync-FocusPlan com BRILHO '+document.getElementById('brilho').value+'% ativado no MY KNAY. Se não abriu, clique em ABRIR no sistema.');
+function editar(gen,antigo){let novo=prompt('Novo nome:',antigo);if(!novo)return;let lista=JSON.parse(localStorage.getItem('grati_lista')||'[]');let achou=lista.find(f=>f.t===antigo&&f.pasta===gen);if(achou){achou.t=novo;localStorage.setItem('grati_lista',JSON.stringify(lista));}else{let base=filmesBase.find(f=>f.t===antigo&&f.pasta===gen);if(base){filmesBase=filmesBase.filter(f=>!(f.t===antigo&&f.pasta===gen));lista.push({t:novo,i:base.i,l:base.l,pasta:base.pasta,type:base.type});localStorage.setItem('grati_lista',JSON.stringify(lista));}}salvarGeneros();}
+function abrir(link,isLocal){if(isLocal){document.getElementById('frame').style.display='none';let v=document.getElementById('videoLocal');v.style.display='block';v.src=link;v.play();}else{document.getElementById('videoLocal').style.display='none';let fr=document.getElementById('frame');fr.style.display='block';fr.src=link;}document.getElementById('player').style.display='block';}
+function fecharPlayer(){document.getElementById('player').style.display='none';document.getElementById('frame').src='';let v=document.getElementById('videoLocal');v.pause();v.src='';}
+function abrirModal(){document.getElementById('tituloModal').innerText='+ VIDEO DO CELULAR';document.getElementById('areaYT').style.display='none';document.getElementById('areaCelular').style.display='block';document.getElementById('modalAdd').style.display='flex';}
+function abrirModalYT(){document.getElementById('tituloModal').innerText='+ LINK YOUTUBE';document.getElementById('areaYT').style.display='block';document.getElementById('areaCelular').style.display='none';document.getElementById('modalAdd').style.display='flex';}
+function fecharModal(){document.getElementById('modalAdd').style.display='none';videoData=null;capaData=null;}
+function salvarFixo(){
+ let nome=document.getElementById('inputNome').value||'Novo Filme';
+ let pasta=document.getElementById('pastaDestino').value;
+ let linkYT=document.getElementById('inputLinkYT').value.trim();
+ let lista=JSON.parse(localStorage.getItem('grati_lista')||'[]');
+ if(linkYT!==''){
+  let final=converteYT(linkYT);let id=final.split('/embed/')[1]||'';let capa=id?'https://img.youtube.com/vi/'+id+'/hqdefault.jpg':'';
+  lista.push({t:nome,i:capa,l:final,pasta:pasta,type:'yt'});
+  localStorage.setItem('grati_lista',JSON.stringify(lista));
+  fecharModal();salvarGeneros();document.getElementById('inputNome').value='';document.getElementById('inputLinkYT').value='';
+  alert('✅ Salvo fixo!');
+  return;
+ }
+ if(videoData){
+  lista.push({t:nome,i:capaData||'',l:videoData,pasta:pasta,type:'local'});
+  localStorage.setItem('grati_lista',JSON.stringify(lista));
+  fecharModal();salvarGeneros();alert('✅ Vídeo salvo fixo!');
+  return;
+ }
+ alert('Cole link ou escolha vídeo!');
 }
-function rem(i){if(confirm('Apagar?')){videos.splice(i,1);render();salvar();}}
-function resetar(){if(confirm('Apagar?')){videos=[];localStorage.removeItem('knaY_FINAL');render();}}
-function abrirAdd(){document.getElementById('boxAdd').style.display='block'}function fecharAdd(){document.getElementById('boxAdd').style.display='none'}function aleatorio(){let its=document.querySelectorAll('.item'); if(its.length) its[Math.floor(Math.random()*its.length)].scrollIntoView({behavior:'smooth'});}
-let bSalvo=localStorage.getItem('brilhoPlug'); if(bSalvo){document.getElementById('brilho').value=bSalvo; mudaBrilho(bSalvo);}
-window.onload=render;
+function apagar(gen,nome){if(!confirm('Apagar '+nome+'?'))return;let l=JSON.parse(localStorage.getItem('grati_lista')||'[]');let novo=l.filter(f=>!(f.t===nome&&f.pasta===gen));if(novo.length!==l.length){localStorage.setItem('grati_lista',JSON.stringify(novo));}else{filmesBase=filmesBase.filter(f=>!(f.t===nome&&f.pasta===gen));}salvarGeneros();}
+function filtrar(){render(document.getElementById('busca').value);}
+function exportarFixo(){let todos=getTodos();let blob=new Blob([JSON.stringify(todos,null,2)],{type:'application/json'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='GRATIFLIX-Backup.json';a.click();}
+salvarGeneros();
 </script>
 </body>
 </html>
