@@ -129,6 +129,27 @@ let link=filmes[i].l;
 if(navigator.share){navigator.share({title:filmes[i].t,text:'Assista no GRATIFLIX: '+filmes[i].t,url:link});}
 else{navigator.clipboard.writeText(link);alert('📤 Link copiado!\n'+link);}
 }
-function compartilharSite(){
-let site=location.href;
-if(navigator.share){navigator
+function modoTV(){
+const f=document.getElementById('frame');if(!f.src)return alert('Abra um filme primeiro!');
+document.querySelector('header').style.display='none';
+document.querySelector('.search').style.display='none';
+document.getElementById('lista').style.display='none';
+alert('📺 MODO TV LIGADO!\n\n1. Deslize o dedo de cima pra baixo\n2. Clique em Smart View / Transmitir\n3. Escolha sua TV');
+}
+function filtrar(){let q=document.getElementById('busca').value.toLowerCase();if(!q){render();return;}let res=filmes.filter(x=>x.t.toLowerCase().includes(q));let c=document.getElementById('lista');let h=`<div class="row-title">Resultado (${res.length})</div><div class="row">`;res.forEach(fi=>{let idx=filmes.indexOf(fi);h+=`<div class="card"><img src="${fi.i}" onclick="play(${idx})"><div class="titulo">${fi.t}</div><div class="botoes"><span onclick="editar(${idx})">✏️</span><span onclick="compartilhar(${idx})">📤</span><span onclick="del(${idx})">🗑️</span></div></div>`});c.innerHTML=h+`</div>`;}
+function editar(i){let atual=filmes[i].t;let novo=prompt('✏️ Mudar nome:',atual);if(novo&&novo.trim()!==''){filmes[i].t=novo.trim();extras=filmes.filter(f=>!filmesBase.find(b=>b.l===f.l));localStorage.setItem('grati_extras',JSON.stringify(extras));render();}}
+function del(i){if(confirm('🗑️ Apagar "'+filmes[i].t+'"?')){let obj=filmes[i];filmes.splice(i,1);extras=filmes.filter(f=>!filmesBase.find(b=>b.l===f.l));localStorage.setItem('grati_extras',JSON.stringify(extras));render();}}
+function compartilhar(i){let link=filmes[i].l;if(navigator.share){navigator.share({title:filmes[i].t,text:'Assista: '+filmes[i].t,url:link});}else{navigator.clipboard.writeText(link);alert('📤 Link copiado!\n'+link);}}
+function compartilharSite(){let site=location.href;if(navigator.share){navigator.share({title:'GRATIFLIX',text:'Filmes grátis!',url:site});}else{alert('Link: '+site);}}
+function convidar(){let site=location.href;let msg=`👋 Entra no meu GRATIFLIX! Filmes grátis:\n${site}`;if(navigator.share){navigator.share({title:'Convite GRATIFLIX',text:msg,url:site});}else{prompt('👥 Copie e envie:',msg);}}
+function addYT(){let link=prompt('Cole link YouTube:');if(!link)return;let id=getID(link);let nome=prompt('Nome:')||'Filme';let pasta=prompt('Pasta?')||'Geral';let obj={t:nome,i:`https://img.youtube.com/vi/${id}/hqdefault.jpg`,l:`https://www.youtube-nocookie.com/embed/${id}`,pasta:pasta};filmes.push(obj);extras.push(obj);localStorage.setItem('grati_extras',JSON.stringify(extras));render();}
+function addPasta(){let n=prompt('Nome da pasta?');if(n){GENEROS.push(n);render();}}
+function abrirArquivo(){document.getElementById('modal').style.display='flex';document.getElementById('boxConteudo').innerHTML=`<h2>📁 ARQUIVO</h2><label>Nome bonito</label><input id="pBonito" placeholder="Ex: Looney Tunes"><label>Links</label><textarea id="pLinks" placeholder="https://youtu.be/..."></textarea><div style="display:flex;gap:6px;margin-top:8px"><button style="flex:1;padding:11px;background:#333;color:#fff;border:none;border-radius:6px" onclick="fecharModal()">Cancelar</button><button style="flex:1;padding:11px;background:#ffcc00;color:#000;border:none;border-radius:6px;font-weight:900" onclick="gerarTemp()">GERAR</button></div><div id="resTemp" style="display:none;margin-top:10px"><textarea id="codTemp" style="height:120px;background:#000;color:#0f0;font-size:10px"></textarea><button style="width:100%;padding:10px;background:#00c851;color:#fff;border:none;border-radius:6px;margin-top:6px" onclick="addTemp()">Adicionar</button></div>`;}
+let temp=[];function gerarTemp(){let bonito=document.getElementById('pBonito').value.trim()||'Geral';let linhas=document.getElementById('pLinks').value.trim().split('\n');temp=[];let cod='';linhas.forEach((ln,i)=>{let id=getID(ln);if(id.length>=10){let o={t:`${bonito} ${i+1}`,i:`https://img.youtube.com/vi/${id}/hqdefault.jpg`,l:`https://www.youtube-nocookie.com/embed/${id}`,pasta:bonito};temp.push(o);cod+=`{t:"${bonito} ${i+1}",i:"https://img.youtube.com/vi/${id}/hqdefault.jpg",l:"https://www.youtube-nocookie.com/embed/${id}",pasta:"${bonito}"},\n`;}});document.getElementById('codTemp').value=cod;document.getElementById('resTemp').style.display='block';}
+function addTemp(){if(temp.length){filmes=filmes.concat(temp);extras=extras.concat(temp);localStorage.setItem('grati_extras',JSON.stringify(extras));render();fecharModal();temp=[];}}
+function fecharModal(){document.getElementById('modal').style.display='none';}
+function salvarFixo(){let txt='let filmesBase=[\n';filmes.forEach(f=>{txt+=`{t:"${f.t}",i:"${f.i}",l:"${f.l}",pasta:"${f.pasta}"},\n`;});txt+='];';document.getElementById('modal').style.display='flex';document.getElementById('boxConteudo').innerHTML=`<h2>💾 SALVAR FIXO</h2><textarea style="height:300px;background:#000;color:#0f0;font-size:10px">${txt}</textarea><button style="width:100%;padding:11px;background:#e50914;color:#fff;border:none;border-radius:6px;margin-top:8px" onclick="fecharModal()">Fechar</button>`;}
+render();
+</script>
+</body>
+</html>
